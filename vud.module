@@ -6,7 +6,7 @@
  */
 
 // Include the theme.inc file.
-module_load_include('inc', 'vud', 'vud.theme');
+\Drupal::moduleHandler()->loadInclude('vud', 'inc', 'vud.theme');
 
 /**
  * Check if the passed user can vote.

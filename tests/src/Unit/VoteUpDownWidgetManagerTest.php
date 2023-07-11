@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\vud\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Component\Plugin\Discovery\DiscoveryInterface;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -17,6 +18,8 @@ use Drupal\vud\Plugin\VoteUpDownWidgetManager;
  */
 class VoteUpDownWidgetManagerTest extends UnitTestCase {
 
+  use ProphecyTrait;
+
   /**
    * Plugin Manager for VoteUpDownWidget plugin type under test.
    */
@@ -25,7 +28,7 @@ class VoteUpDownWidgetManagerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $cache_backend = $this->prophesize(CacheBackendInterface::class);

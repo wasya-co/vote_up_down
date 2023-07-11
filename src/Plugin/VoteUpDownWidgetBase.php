@@ -65,12 +65,14 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
         ->condition('value', 1)
         ->condition('entity_type', $entityTypeId)
         ->condition('entity_id', $entityId)
+        ->accessCheck(FALSE)
         ->count()
         ->execute();
       $down_points = \Drupal::entityQuery('vote')
         ->condition('value', -1)
         ->condition('entity_type', $entityTypeId)
         ->condition('entity_id', $entityId)
+        ->accessCheck(FALSE)
         ->count()
         ->execute();
     }
