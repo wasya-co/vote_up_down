@@ -32,12 +32,9 @@ class VotingApiController extends ControllerBase {
    *   Value of vote to be stored.
    * @param $widget_name
    *   Widget name.
-   * @param string $js
-   *   Ajax is enabled? Not working now, core bug?
-   *
    * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function vote($entity_type_id, $entity_id, $vote_value, $widget_name, $js) {
+  public function vote($entity_type_id, $entity_id, $vote_value, $widget_name) {
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);
@@ -77,7 +74,7 @@ class VotingApiController extends ControllerBase {
       'value_type' => $voteTypeId,
     ];
 
-    if ($js == 'ajax') {
+    if ($this->isAjaxVoteRequest()) {
       $response = new AjaxResponse();
       $widget_element = $widget->build($entity);
       $response->addCommand(new ReplaceCommand("#vud-widget-$entity_type_id-$entity_id", $widget_element));
@@ -96,12 +93,9 @@ class VotingApiController extends ControllerBase {
    *   EntityTypeId of the referenced entity
    * @param $widget_name
    *   Widget name.
-   * @param string $js
-   *   Ajax is enabled? Not working now, core bug?
-   *
    * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function resetVote($entity_type_id, $entity_id, $widget_name, $js) {
+  public function resetVote($entity_type_id, $entity_id, $widget_name) {
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);
@@ -123,7 +117,7 @@ class VotingApiController extends ControllerBase {
       ->getViewBuilder($entity_type_id)
       ->resetCache([$entity]);
 
-    if ($js == 'ajax') {
+    if ($this->isAjaxVoteRequest()) {
       $response = new AjaxResponse();
       $widget_element = $widget->build($entity);
       $response->addCommand(new ReplaceCommand("#vud-widget-$entity_type_id-$entity_id", $widget_element));
@@ -163,6 +157,16 @@ class VotingApiController extends ControllerBase {
     else {
       return AccessResultAllowed::allowed();
     }
+  }
+
+  /**
+   * Determines whether current request expects Drupal AJAX response.
+   *
+   * @return bool
+   *   TRUE when this request comes from core use-ajax behavior.
+   */
+  protected function isAjaxVoteRequest() {
+    return \Drupal::request()->query->get('_wrapper_format') === 'drupal_ajax';
   }
 
 }
