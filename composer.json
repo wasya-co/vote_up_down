@@ -1,5 +1,5 @@
 {
-    "name": "drupal/vote_up_down",
+    "name": "wasya-co/vote_up_down",
     "description": "Allows votes on some drupal entities and provides the base for implementing votes on other entities.",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
