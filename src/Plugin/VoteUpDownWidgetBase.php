@@ -151,7 +151,6 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
           'entity_id' => $entityId,
           'vote_value' => 1,
           'widget_name' => $widget_name,
-          'js' => 'nojs',
         ]);
         $variables['#class_up'] .= ' active';
       }
@@ -165,7 +164,6 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
           'entity_id' => $entityId,
           'vote_value' => -1,
           'widget_name' => $widget_name,
-          'js' => 'nojs',
         ]);
         $variables['#class_down'] .= ' active';
       }
@@ -178,7 +176,6 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
           'entity_type_id' => $entityTypeId,
           'entity_id' => $entityId,
           'widget_name' => $widget_name,
-          'js' => 'nojs',
         ]);
         $variables += [
           '#reset_long_text' => $this->t('Reset your vote'),

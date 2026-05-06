@@ -22,6 +22,23 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class VotingApiController extends ControllerBase {
 
   /**
+   * Whether the request is a Drupal AJAX callback (vs full page navigation).
+   *
+   * The vote URLs used to include a final path segment nojs|ajax; core's AJAX
+   * framework rewrites /nojs to /ajax, which changed the path string used for
+   * CSRF validation and broke tokens unless a Drupal core patch was applied.
+   * AJAX is now detected from the request instead of the path.
+   *
+   * @return bool
+   *   TRUE when the response should be an AjaxResponse.
+   */
+  protected function isDrupalAjaxRequest() {
+    $request = $this->getRequest();
+    return $request->query->get('_wrapper_format') === 'drupal_ajax'
+      || $request->getRequestFormat() === 'drupal_ajax';
+  }
+
+  /**
    * Cast a vote.
    *
    * @param $entity_id
@@ -32,12 +49,10 @@ class VotingApiController extends ControllerBase {
    *   Value of vote to be stored.
    * @param $widget_name
    *   Widget name.
-   * @param string $js
-   *   Ajax is enabled? Not working now, core bug?
    *
    * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function vote($entity_type_id, $entity_id, $vote_value, $widget_name, $js) {
+  public function vote($entity_type_id, $entity_id, $vote_value, $widget_name) {
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);
@@ -77,7 +92,7 @@ class VotingApiController extends ControllerBase {
       'value_type' => $voteTypeId,
     ];
 
-    if ($js == 'ajax') {
+    if ($this->isDrupalAjaxRequest()) {
       $response = new AjaxResponse();
       $widget_element = $widget->build($entity);
       $response->addCommand(new ReplaceCommand("#vud-widget-$entity_type_id-$entity_id", $widget_element));
@@ -96,12 +111,10 @@ class VotingApiController extends ControllerBase {
    *   EntityTypeId of the referenced entity
    * @param $widget_name
    *   Widget name.
-   * @param string $js
-   *   Ajax is enabled? Not working now, core bug?
    *
    * @return \Drupal\Core\Ajax\AjaxResponse|\Symfony\Component\HttpFoundation\RedirectResponse
    */
-  public function resetVote($entity_type_id, $entity_id, $widget_name, $js) {
+  public function resetVote($entity_type_id, $entity_id, $widget_name) {
     $entity = $this->entityTypeManager()
       ->getStorage($entity_type_id)
       ->load($entity_id);
@@ -123,7 +136,7 @@ class VotingApiController extends ControllerBase {
       ->getViewBuilder($entity_type_id)
       ->resetCache([$entity]);
 
-    if ($js == 'ajax') {
+    if ($this->isDrupalAjaxRequest()) {
       $response = new AjaxResponse();
       $widget_element = $widget->build($entity);
       $response->addCommand(new ReplaceCommand("#vud-widget-$entity_type_id-$entity_id", $widget_element));
