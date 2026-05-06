@@ -103,6 +103,12 @@ abstract class VoteUpDownWidgetBase extends PluginBase implements VoteUpDownWidg
           'vud/common',
         ],
       ],
+      // Vote links include CSRF query args bound to the session; the widget
+      // also reflects the current user's vote. Without these contexts, cached
+      // markup can be reused across users/sessions and tokens become invalid.
+      '#cache' => [
+        'contexts' => ['user', 'session'],
+      ],
     ];
 
     $this->getWidgetTemplateVars($module_path, $variables);
